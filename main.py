@@ -57,11 +57,11 @@ def get_paper_details(file_path: str):
 
 if __name__ == '__main__':
     for i in range(1, 15):
+        file_path = f'papers/paper{i}.pdf'
         try:
-            file_path = f'papers/paper{i}.pdf'
             print(file_path)
             paper = get_paper_details(file_path)
-        except ValueError:
-            pass
+        except ValueError as e:
+            print(f"Paper {file_path} failed.", e)
         # print(paper)
         # print(paper.authors.all())
