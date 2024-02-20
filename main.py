@@ -1,12 +1,12 @@
 from PDF import PDFFile
-from models import Paper, Author
+from models import Paper, Author, Publisher
 
 
-def get_or_create_paper(doi: str, title=None) -> Paper:
+def get_or_create_paper(doi: str, **kwargs) -> Paper:
     doi = str(doi).upper()
     paper = Paper.nodes.get_or_none(doi=doi)
     if paper is None:
-        paper = Paper(doi=doi, title=title).save()
+        paper = Paper(doi=doi, **kwargs).save()
     return paper
 
 
@@ -20,7 +20,7 @@ def add_citations(paper: Paper, file_path: str):
                 doi=reference['DOI'],
                 title=reference.get('title')
             )
-            ref_paper.cites.connect(paper)
+            paper.cites.connect(ref_paper)
 
 
 def get_paper_details(file_path: str):
@@ -28,10 +28,20 @@ def get_paper_details(file_path: str):
     doi = pdf.get_doi()
     title = pdf.get_paper_title()
     doi = pdf.get_doi()
+    publisher = pdf.get_publisher()
+    published = pdf.get_publish_date()
     if doi is None:
         return
     authors = pdf.get_paper_authors()
     paper = get_or_create_paper(doi=doi, title=title)
+    if publisher:
+        publisher_node = Publisher.nodes.get_or_none(name=publisher)
+        if publisher_node is None:
+            publisher_node = Publisher(name=publisher).save()
+        paper.publisher.connect(
+            publisher_node,
+            dict(published)
+        )
     for author_details in authors:
         m = {
             'given_name': author_details.get("given"),
@@ -46,9 +56,12 @@ def get_paper_details(file_path: str):
 
 
 if __name__ == '__main__':
-    for i in range(1, 13):
-        file_path = f'/tmp/paper{i}.pdf'
-        print(file_path)
-        paper = get_paper_details(file_path)
+    for i in range(1, 15):
+        try:
+            file_path = f'papers/paper{i}.pdf'
+            print(file_path)
+            paper = get_paper_details(file_path)
+        except ValueError:
+            pass
         # print(paper)
         # print(paper.authors.all())

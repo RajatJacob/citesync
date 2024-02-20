@@ -71,31 +71,35 @@ class PDFFile(BaseModel):
         data = fetch_crossref(query)
         return data
 
-    def get_doi(self):
+    def get_crossref_item(self):
         crossref = self.get_crossref()
         if not crossref:
-            return None
-        return str(crossref['message']['items'][0]['DOI'])
+            raise ValueError('No Crossref found!')
+        return crossref['message']['items'][0]
+
+    def get_doi(self):
+        return str(self.get_crossref_item()['DOI'])
 
     def get_paper_title(self):
-        crossref = self.get_crossref()
-        if not crossref:
-            return None
-        return str(crossref['message']['items'][0]['title'][0])
+        return str(self.get_crossref_item()['title'][0])
 
     def get_paper_authors(self):
-        crossref = self.get_crossref()
         out = []
-        if not crossref:
-            return out
-        authors = crossref['message']['items'][0]['author']
+        authors = self.get_crossref_item()['author']
         for author in authors:
             out.append({'given': author.get('given'),
                        'family': author.get('family')})
         return out
 
     def get_references(self):
-        crossref = self.get_crossref()
-        if not crossref:
+        try:
+            return self.get_crossref_item()['reference']
+        except ValueError:
             return []
-        return crossref['message']['items'][0]['reference']
+
+    def get_publisher(self):
+        return self.get_crossref_item()['publisher']
+
+    def get_publish_date(self):
+        year, month = self.get_crossref_item()['published']['date-parts'][0]
+        return {'year': year, 'month': month}
