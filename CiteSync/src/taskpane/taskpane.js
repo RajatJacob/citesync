@@ -12,6 +12,7 @@ Office.onReady((info) => {
     document.getElementById("run").onclick = run;
   }
 });
+
 export async function run() {
   return Word.run(async (context) => {
       // Get the currently selected text
@@ -21,14 +22,32 @@ export async function run() {
       // Synchronize to execute the load operation
       await context.sync();
 
-      // Insert a paragraph at the end of the document with the selected text
-      const paragraph = context.document.body.insertParagraph(range.text.replace('\r', ''), Word.InsertLocation.end);
+      // Extract the highlighted word
+      const highlightedWord = range.text.replace('\r', '');
 
-      // Change the paragraph color to blue.
-      paragraph.font.color = "blue";
+      // Make an HTTP POST request to your Flask backend
+      const response = await fetch('http://127.0.0.1:5000/run-script', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ input: highlightedWord })
+      });
 
-      // Synchronize again to apply the changes
-      await context.sync();
+      // Check if the request was successful
+      if (response.ok) {
+        // Get the response text
+        const output = await response.text();
+        
+        // Insert the output into the Word document
+        const paragraph = context.document.body.insertParagraph(output, Word.InsertLocation.end);
+        paragraph.font.color = "blue"; // Change the font color to blue
+
+        // Synchronize to apply the changes
+        await context.sync();
+      } else {
+        console.error('Error:', response.statusText);
+      }
   });
 }
 
