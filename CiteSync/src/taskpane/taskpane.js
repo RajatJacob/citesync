@@ -22,7 +22,7 @@ export async function run() {
       await context.sync();
 
       // Insert a paragraph at the end of the document with the selected text
-      const paragraph = context.document.body.insertParagraph(range.text, Word.InsertLocation.end);
+      const paragraph = context.document.body.insertParagraph(range.text.replace('\r', ''), Word.InsertLocation.end);
 
       // Change the paragraph color to blue.
       paragraph.font.color = "blue";
