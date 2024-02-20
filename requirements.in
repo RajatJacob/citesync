@@ -1,0 +1,7 @@
+PyMuPDF
+pandas
+pdfminer
+requests
+pydantic
+neomodel
+mypy
