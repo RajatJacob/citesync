@@ -1,5 +1,7 @@
+from citation import answer_query
 from flask import Flask, request, jsonify, render_template
 from main import get_paper_details
+from create_database import add_file_to_store
 
 app = Flask(__name__)
 
@@ -25,10 +27,24 @@ def upload():
         file.save(file_path)
         try:
             get_paper_details(file_path=file_path)
-        except:
+            add_file_to_store(file_path=file_path)
+        except Exception as e:
+            print("ERROR", e)
             return jsonify({'error': 'Couldn\'t process PDF file.'}), 500
         return 'File uploaded successfully'
     else:
         return jsonify({
             'error': 'Invalid file format. Please upload a PDF file'
         }), 400
+
+
+@app.route('/search', methods=['POST'])
+def search():
+    data = request.json
+    if 'query' not in data:
+        return jsonify(
+            {'error': 'Invalid input. Body must include `query` field'}
+        ), 400
+    query = data['query']
+    c = answer_query(query)
+    return jsonify({'citation': c})

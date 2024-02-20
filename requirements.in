@@ -6,3 +6,10 @@ pydantic
 neomodel
 mypy
 Flask
+langchain
+PyPDF2
+openai
+chromadb
+langchain-openai
+unstructured
+unstructured[pdf]
