@@ -1,4 +1,4 @@
-from citation import answer_query
+from citation import CitationNotFound, get_ama_citation
 from flask import Flask, request, jsonify, render_template
 from main import get_paper_details
 from create_database import add_file_to_store
@@ -38,7 +38,7 @@ def upload():
         }), 400
 
 
-@app.route('/search', methods=['POST'])
+@app.route('/ama', methods=['POST'])
 def search():
     data = request.json
     if 'query' not in data:
@@ -46,5 +46,10 @@ def search():
             {'error': 'Invalid input. Body must include `query` field'}
         ), 400
     query = data['query']
-    c = answer_query(query)
-    return jsonify({'citation': c})
+    try:
+        citation = get_ama_citation(query)
+    except CitationNotFound:
+        return jsonify({'error': 'Citation not found!'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    return jsonify(citation)

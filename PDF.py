@@ -103,3 +103,6 @@ class PDFFile(BaseModel):
     def get_publish_date(self):
         year, month = self.get_crossref_item()['published']['date-parts'][0]
         return {'year': year, 'month': month}
+
+    def get_subject(self):
+        return self.get_crossref_item()['container-title'][0]

@@ -3,10 +3,7 @@ from langchain.vectorstores.chroma import Chroma
 from langchain_community.embeddings import OpenAIEmbeddings
 from main import get_paper_details
 
-# declaring the path for the chroma database
 CHROMA_PATH = "chroma"
-
-# defining the prompt template
 PROMPT_TEMPLATE = """
 Here is some information:
 
@@ -17,36 +14,66 @@ Here is some information:
 Answer the question based on the above: {question}
 """
 
-# reading the openai api key from the file
 with open("OPENAI_API_KEY.txt", "r") as f:
     OPENAI_API_KEY = f.read().strip()
 
-# defining the function to answer the query
-embedding_function = OpenAIEmbeddings(
-    openai_api_key=OPENAI_API_KEY)  # embedding function for the model
-# initializing the database from the chroma
+embedding_function = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 db = Chroma(persist_directory=CHROMA_PATH,
             embedding_function=embedding_function)
 
 
-def get_citation_from_path(file_path):
+class CitationNotFound(BaseException):
+    pass
+
+
+def get_paper_details_from_path(file_path) -> dict:
     paper = get_paper_details(file_path=file_path)
     if paper is None:
-        return None
-    return paper.doi
+        raise CitationNotFound
+    publisher_node = paper.publisher.single()
+    publisher = None if publisher_node is None else publisher_node.name
+    author_names = [
+        {
+            'given_name': author_node.given_name,
+            'family_name': author_node.family_name
+        }
+        for author_node in paper.authors
+    ]
+    return {
+        'title': paper.title,
+        'doi': paper.doi,
+        'publisher': publisher,
+        'year': paper.year,
+        'month': paper.month,
+        'authors': author_names,
+        'subject': paper.subject
+    }
 
 
-def answer_query(query_text) -> dict:
-    # Search the DB.
-    # searching the database for the query text and getting the top 2 results
+def get_citation_from_path(file_path: str) -> str:
+    details = get_paper_details_from_path(file_path=file_path)
+    authors = ', '.join([
+        ' '.join(
+            filter(bool, [
+                author.get('given_name'),
+                author.get('family_name')
+            ])
+        ) for author in details.get('authors', [])])
+    return '. '.join([
+        authors, details['title'], details['subject'], str(
+            details['year']), details['doi']
+    ])
+
+
+def get_source_paper(query_text: str) -> str:
     results = db.similarity_search_with_relevance_scores(query_text, k=2)
-    # if no results are found or the relevance score is less than 0.7
     if len(results) == 0 or results[0][1] < 0.7:
-        # return the message - prevents hallucinations
-        return (f"Unable to find matching results. Ask another question.")
+        raise CitationNotFound
 
     source = results[0][0].metadata['source']
-    return {
-        'source_paper': source,
-        'citation': get_citation_from_path(source)
-    }
+    return source
+
+
+def get_ama_citation(query_text) -> str:
+    source = get_source_paper(query_text=query_text)
+    return get_citation_from_path(source)

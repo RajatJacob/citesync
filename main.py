@@ -30,18 +30,21 @@ def get_paper_details(file_path: str):
     doi = pdf.get_doi()
     publisher = pdf.get_publisher()
     published = pdf.get_publish_date()
+    subject = pdf.get_subject()
     if doi is None:
         return
     authors = pdf.get_paper_authors()
-    paper = get_or_create_paper(doi=doi, title=title)
+    paper = get_or_create_paper(
+        doi=doi,
+        title=title,
+        subject=subject,
+        **published,
+    )
     if publisher:
         publisher_node = Publisher.nodes.get_or_none(name=publisher)
         if publisher_node is None:
             publisher_node = Publisher(name=publisher).save()
-        paper.publisher.connect(
-            publisher_node,
-            dict(published)
-        )
+        paper.publisher.connect(publisher_node)
     for author_details in authors:
         m = {
             'given_name': author_details.get("given"),

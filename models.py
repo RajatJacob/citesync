@@ -1,6 +1,6 @@
 from neomodel import (
     config, StructuredNode, StringProperty, RelationshipFrom,
-    RelationshipTo, StructuredRel, IntegerProperty
+    RelationshipTo, StructuredRel, IntegerProperty, ZeroOrOne
 )
 config.DATABASE_URL = 'bolt://neo4j:password@10.0.0.10:7687'
 
@@ -11,14 +11,9 @@ class Author(StructuredNode):
     papers = RelationshipTo('Paper', 'WROTE')
 
 
-class Published(StructuredRel):
-    year = IntegerProperty()
-    month = IntegerProperty()
-
-
 class Publisher(StructuredNode):
     name = StringProperty(unique_index=True)
-    papers = RelationshipTo('Paper', 'PUBLISHED', model=Published)
+    papers = RelationshipTo('Paper', 'PUBLISHED')
 
 
 class Paper(StructuredNode):
@@ -26,7 +21,10 @@ class Paper(StructuredNode):
     title = StringProperty()
     authors = RelationshipFrom('Author', 'WROTE')
     cites = RelationshipTo('Paper', 'CITES')
-    publisher = RelationshipFrom('Publisher', 'PUBLISHED', model=Published)
+    publisher = RelationshipFrom('Publisher', 'PUBLISHED')
+    year = IntegerProperty()
+    month = IntegerProperty()
+    subject = StringProperty()
 
     def pre_save(self):
         self.doi = str(self.doi).upper()
