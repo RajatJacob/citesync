@@ -1,4 +1,3 @@
-from torch import Value
 from citation import CitationNotFound, get_ama_citation
 from flask import Flask, request, jsonify, render_template
 from main import get_paper_details

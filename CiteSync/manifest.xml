@@ -10,7 +10,7 @@
   <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://www.contoso.com/help"/>
   <AppDomains>
-    <AppDomain>https://b7ac-202-164-41-66.ngrok-free.app</AppDomain>
+    <AppDomain>https://citesync.rajatjacob.com</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Document"/>

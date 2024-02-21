@@ -34,7 +34,7 @@ export async function run() {
 
     const highlightedText = range.text.replace("\r", "");
     try {
-      const url = new URL("https://b7ac-202-164-41-66.ngrok-free.app/ama");
+      const url = new URL("https://citesync.rajatjacob.com/ama");
       url.searchParams.set('q', highlightedText);
       const response = await fetch(url.toString());
 
