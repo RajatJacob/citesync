@@ -1,0 +1,29 @@
+diff --git a/Dockerfile b/Dockerfile
+index ad7d9dc3..4da8d8e4 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,17 +1,16 @@
+-FROM python:3.10-alpine
++FROM python:3.10
+ 
+ WORKDIR /app
+ 
+-COPY . .
++ADD ./requirements.txt ./requirements.txt
+ 
+-RUN rm -f -R /app/chroma
+-RUN rm -f -R /app/papers
++RUN pip install -r requirements.txt
++
++ADD . .
+ 
+ VOLUME /app/chroma
+ VOLUME /app/papers
+ 
+-RUN pip install -r requirements.txt
+-
+ EXPOSE 5000
+ 
+ ENTRYPOINT [ "python3", "-m", "flask", "run", "--host", "0.0.0.0" ]
+\ No newline at end of file
+

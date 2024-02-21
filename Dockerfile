@@ -1,16 +1,16 @@
-FROM python:3.10-alpine
+FROM python:3.10
 
 WORKDIR /app
 
-COPY . .
-
-RUN rm -f -R /app/chroma
-RUN rm -f -R /app/papers
-
-VOLUME /app/chroma
-VOLUME /app/papers
+ADD ./requirements.txt ./requirements.txt
 
 RUN pip install -r requirements.txt
+
+ADD . .
+
+VOLUME /usr/local/lib/python3.10/site-packages
+VOLUME /app/chroma
+VOLUME /app/papers
 
 EXPOSE 5000
 
