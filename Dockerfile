@@ -1,13 +1,15 @@
-FROM python:3.10
+FROM python:3.10-alpine
 
 WORKDIR /app
 
 COPY . .
 
+RUN rm -f -R /app/chroma
+RUN rm -f -R /app/papers
+
 VOLUME /app/chroma
 VOLUME /app/papers
 
-RUN pip install flask
 RUN pip install -r requirements.txt
 
 EXPOSE 5000
