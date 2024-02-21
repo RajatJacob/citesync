@@ -78,3 +78,17 @@
 b {
     font-weight: bold;
 }
+
+#error {
+    color: red;
+}
+
+#run {
+    color: blue;
+    cursor: pointer;
+}
+
+#run.running {
+    color: black;
+    cursor: default;
+}

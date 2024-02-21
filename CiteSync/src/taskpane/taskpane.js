@@ -1,8 +1,3 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
- * See LICENSE in the project root for license information.
- */
-
 /* global document, Office, Word */
 
 Office.onReady((info) => {
@@ -12,44 +7,48 @@ Office.onReady((info) => {
     document.getElementById("run").onclick = run;
   }
 });
+
+function addError(error) {
+  document.getElementById('error').innerText+=`\n${error}`;
+  document.getElementById('run').innerText = "Run";
+}
+
+function setRunning() {
+  document.getElementById('error').innerText = "";
+  document.getElementById("run").innerText = "Running...";
+  document.getElementById('run').classList.add('running');
+}
+
+function setSuccess() {
+  document.getElementById('error').innerText = "";
+  document.getElementById('run').innerText = "Run";
+  document.getElementById('run').classList.remove('running');
+}
+
 export async function run() {
+  setRunning();
   return Word.run(async (context) => {
-    // Get the currently selected text
     const range = context.document.getSelection();
     range.load("text");
-
-    // Synchronize to execute the load operation
     await context.sync();
 
     const highlightedText = range.text.replace("\r", "");
-    document.getElementById("run").innerText = "Running...";
     try {
-      document.getElementById("error").innerText += "STARTING\n"
-      // const response = await fetch('https://jsonplaceholder.typicode.com/todos/1')
-      const response = await fetch("http://127.0.0.1:5000/ama", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ query: highlightedText }),
-      });
-      document.getElementById("error").innerText += "REQUEST DONE\n"
+      const url = new URL("https://b7ac-202-164-41-66.ngrok-free.app/ama");
+      url.searchParams.set('q', highlightedText);
+      const response = await fetch(url.toString());
 
       if (response.ok) {
-        document.getElementById("error").innerText += "OK\n"
+        setSuccess();
         const citation = JSON.stringify(await response.json());
-        document.getElementById("error").innerText += "JSON\n"+citation
         const paragraph = context.document.body.insertParagraph(citation, Word.InsertLocation.end);
         paragraph.font.color = "blue";
       }else {
-        document.getElementById("error").innerText += "NOT OK\n"
-        console.error("NOT OK")
+        addError("Oh no! Something's not OK");
       }
     } catch (e) {
-      console.error(e);
-      document.getElementById("error").innerText = "Error!\n" + e;
+      addError(e);
     }
-    document.getElementById("run").innerText = "Ran";
     await context.sync();
   });
 }

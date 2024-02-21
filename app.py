@@ -1,3 +1,4 @@
+from torch import Value
 from citation import CitationNotFound, get_ama_citation
 from flask import Flask, request, jsonify, render_template
 from main import get_paper_details
@@ -40,14 +41,11 @@ def upload():
         }), 400
 
 
-@app.route('/ama', methods=['POST'])
-def search():
-    data = request.json
-    if 'query' not in data:
-        return jsonify(
-            {'error': 'Invalid input. Body must include `query` field'}
-        ), 400
-    query = data['query']
+@app.route('/ama', methods=['GET'])
+def ama():
+    query = request.args.get('q')
+    if query is None:
+        return jsonify({'error': 'Please provide a valid query'}), 400
     try:
         citation = get_ama_citation(query)
     except CitationNotFound:
