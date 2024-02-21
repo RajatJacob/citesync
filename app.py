@@ -2,8 +2,10 @@ from citation import CitationNotFound, get_ama_citation
 from flask import Flask, request, jsonify, render_template
 from main import get_paper_details
 from create_database import add_file_to_store
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
@@ -53,3 +55,7 @@ def search():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     return jsonify(citation)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

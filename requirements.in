@@ -6,6 +6,7 @@ pydantic
 neomodel
 mypy
 Flask
+flask-cors
 langchain
 PyPDF2
 openai

@@ -1,0 +1,9 @@
+version: "3"
+services:
+  citesync:
+    image: rajatjacob.com/registry/citesync
+    ports:
+      - "5100:5000"
+    volumes:
+      - "./papers:/app/papers"
+      - "./chroma:/app/chroma"
