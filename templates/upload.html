@@ -16,6 +16,14 @@
 				background-color: black;
 				color: white;
 			}
+            #upload-alert {
+                opacity: 1;
+                transition: all .5s ease;
+            }
+			#upload-alert.hidden {
+				opacity: 0;
+				transition: all .5s ease;
+			}
 		</style>
 	</head>
 	<body>
@@ -26,9 +34,19 @@
 					<img src="/static/citesync_logo.png" width="100" />
 					<h1>CiteSync</h1>
 				</center>
-				<form action="/upload" method="post" enctype="multipart/form-data">
+				<div class="alert alert-success hidden" id="upload-alert" role="alert">
+					Uploading and analysing papers. This might take a while.
+				</div>
+				<form
+					action="/upload"
+					method="post"
+					enctype="multipart/form-data"
+					onsubmit="showLoading()"
+				>
 					<div class="mb-3">
-						<label class="form-label text-bg-dark" for="file-chooser">Upload one or more papers</label>
+						<label class="form-label text-bg-dark" for="file-chooser">
+							Upload one or more papers
+						</label>
 						<input
 							type="file"
 							name="file"
@@ -49,5 +67,10 @@
 			integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 			crossorigin="anonymous"
 		></script>
+		<script>
+			function showLoading() {
+				document.getElementById("upload-alert").classList.remove("hidden");
+			}
+		</script>
 	</body>
 </html>
