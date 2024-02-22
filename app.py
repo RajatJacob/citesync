@@ -29,7 +29,6 @@ def upload():
             file_path = 'papers/' + file.filename
             file.save(file_path)
             try:
-                get_paper_details(file_path=file_path)
                 add_file_to_store(file_path=file_path)
                 success.add(file.filename)
             except Exception:
