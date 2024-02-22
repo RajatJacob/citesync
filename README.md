@@ -18,8 +18,8 @@ CiteSync is a reference management tool designed to streamline the citation proc
 
 ## Contributors
 
-- @amalnairr
-- @Ankur-Kumar222
-- @cefiljoseph
-- @mahikanair
-- @RajatJacob
+- [@amalnairr](https://github.com/amalnairr)
+- [@Ankur-Kumar222](https://github.com/Ankur-Kumar222)
+- [@cefiljoseph](https://github.com/cefiljoseph)
+- [@mahikanair](https://github.com/mahikanair)
+- [@RajatJacob](https://github.com/RajatJacob)
