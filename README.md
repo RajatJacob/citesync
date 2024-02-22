@@ -1,4 +1,4 @@
-![CiteSync](./static/citesync_logo.png)
+<img src="./static/citesync_logo.png" width="100" alt="CiteSync logo" />
 
 # CiteSync
 
