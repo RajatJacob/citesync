@@ -15,3 +15,11 @@ CiteSync is a reference management tool designed to streamline the citation proc
 5. Run the server `npm start`. Microsoft Word should open now with the add-in loaded.
 6. Add your own research content.
 7. Highlight the text you want to cite and press the `Cite` button. The citation should get added inline and added to the bibliography section below.
+
+## Contributors
+
+- @amalnairr
+- @Ankur-Kumar222
+- @cefiljoseph
+- @mahikanair
+- @RajatJacob
