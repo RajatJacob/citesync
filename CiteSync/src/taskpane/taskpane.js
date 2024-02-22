@@ -1,9 +1,13 @@
 /* global document, Office, Word */
 
-const isDev = true;
+const isDev = false;
 
 function addError(error) {
-  if(!isDev) return;
+  document.getElementById("run").classList.remove("running");
+  if(!isDev) {
+    document.getElementById("error").innerText = "Couldn't find the reference!"
+    return;
+  };
   document.getElementById("error").innerText += `\n${error}`;
   document.getElementById("run").innerText = "Run";
 }
@@ -16,7 +20,7 @@ function setRunning() {
 
 function setSuccess() {
   document.getElementById("error").innerText = "";
-  document.getElementById("run").innerText = "Run";
+  document.getElementById("run").innerText = "Cite!";
   document.getElementById("run").classList.remove("running");
 }
 
@@ -55,7 +59,7 @@ async function addCitation(ama, context) {
     await context.sync();
     const citationPara = bibliography.insertParagraph(`[${i+1}] ${ama}`, Word.InsertLocation.after);
     if(i===0) citationPara.startNewList();
-    citationPara.font.size = 14;
+    citationPara.font.size = 12;
     citationPara.font.bold = false;
     citationPara.load('uniqueLocalId');
     await context.sync();
@@ -82,7 +86,7 @@ export async function run() {
         const citation = JSON.stringify(await response.json());
         const i = await addCitation(citation, context);
         const citationText = range.insertText(` [${i+1}]`, Word.InsertLocation.end);
-        citationText.font.superscript = true;
+        // citationText.font.superscript = true;
         citationText.font.color = "blue";
       } else {
         addError("CITATION: Oh no! Something's not OK");
