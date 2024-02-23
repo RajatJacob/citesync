@@ -31,7 +31,8 @@ def upload():
             try:
                 add_file_to_store(file_path=file_path)
                 success.add(file.filename)
-            except Exception:
+            except Exception as e:
+                print("ERROR", e)
                 pass
     return jsonify({
         'successful': list(success),

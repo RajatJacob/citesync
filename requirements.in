@@ -12,5 +12,6 @@ PyPDF2
 openai
 chromadb
 langchain-openai
+sentence_transformers
 unstructured
 unstructured[pdf]

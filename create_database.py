@@ -2,7 +2,7 @@
 from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
-from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 from langchain.vectorstores.chroma import Chroma
 import os
 import shutil
@@ -66,11 +66,12 @@ def split_text(documents: list[Document]):
 
 
 def add_to_chroma(chunks: list[Document]):
-    with open('OPENAI_API_KEY.txt', 'r') as file:
-        API_KEY = file.read().replace('\n', '')
+    # with open('OPENAI_API_KEY.txt', 'r') as file:
+    #     API_KEY = file.read().replace('\n', '')
     # Create a new DB from the documents.
     db = Chroma.from_documents(
-        chunks, OpenAIEmbeddings(openai_api_key=API_KEY),
+        chunks, HuggingFaceBgeEmbeddings(
+    model_name='sentence-transformers/all-MiniLM-L6-v2'),
         persist_directory=CHROMA_PATH
     )
     db.persist()

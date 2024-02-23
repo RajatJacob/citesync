@@ -1,6 +1,6 @@
 # import the required libraries
 from langchain.vectorstores.chroma import Chroma
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 from main import get_paper_details
 
 CHROMA_PATH = "chroma"
@@ -14,10 +14,11 @@ Here is some information:
 Answer the question based on the above: {question}
 """
 
-with open("OPENAI_API_KEY.txt", "r") as f:
-    OPENAI_API_KEY = f.read().strip()
+# with open("OPENAI_API_KEY.txt", "r") as f:
+#     OPENAI_API_KEY = f.read().strip()
 
-embedding_function = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+embedding_function = HuggingFaceBgeEmbeddings(
+    model_name='sentence-transformers/all-MiniLM-L6-v2')
 db = Chroma(persist_directory=CHROMA_PATH,
             embedding_function=embedding_function)
 
@@ -67,7 +68,8 @@ def get_citation_from_path(file_path: str) -> str:
 
 def get_source_paper(query_text: str) -> str:
     results = db.similarity_search_with_relevance_scores(query_text, k=2)
-    if len(results) == 0 or results[0][1] < 0.7:
+    print("RESULTS\n\n", results)
+    if len(results) == 0 or results[0][1] < 0.3:
         raise CitationNotFound
 
     source = results[0][0].metadata['source']
